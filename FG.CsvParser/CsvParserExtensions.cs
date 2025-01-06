@@ -11,7 +11,10 @@ namespace FG.CsvParser
     {
         public static IServiceCollection AddCsvParser(this IServiceCollection services, CsvParserConfiguration csvParserConfiguration)
         {
-            ArgumentNullException.ThrowIfNull(csvParserConfiguration);
+            if(csvParserConfiguration is null)
+            {
+                throw new ArgumentNullException(nameof(csvParserConfiguration));
+            }
             services.AddScoped((p) =>
             {
                 var parser = new CsvParser(csvParserConfiguration);

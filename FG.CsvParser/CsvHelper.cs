@@ -1,12 +1,24 @@
 ﻿using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace FG.CsvParser
 {
     public static class CsvHelper
     {
-        public static List<Dictionary<string, object>> CsvTextToList(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
+        
+        /// <summary>
+        /// Convert CSV text to a list of dictionaries. Each dictionary represents a row in the CSV text.
+        /// </summary>
+        /// <param name="textContent">The CSV text content.</param>
+        /// <param name="hasHeader">Indicates if the CSV text has a header row.</param>
+        /// <param name="rowSplitter">The string used to split rows in the CSV text.</param>
+        /// <param name="columnSplitter">The character used to split columns in the CSV text.</param>
+        /// <returns>A list of dictionaries where each dictionary represents a row in the CSV text.</returns>
+        public static List<Dictionary<string, object>> CsvTextToDictionary(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
         {
             var list = new List<Dictionary<string, object>>();
             var rows = textContent.Split(rowSplitter).ToList();
@@ -15,7 +27,7 @@ namespace FG.CsvParser
             {
                 var headerRow = rows.First();
                 rows.RemoveAt(0);
-                headers = [.. headerRow.Split(columnSplitter)];
+                headers = headerRow.Split(columnSplitter).ToList();
                 if (headers.Count == 0)
                 {
                     hasHeader = false;
@@ -41,6 +53,15 @@ namespace FG.CsvParser
             return list;
         }
 
+        /// <summary>
+        /// Convert CSV text to a list of objects of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of objects to convert each row to.</typeparam>
+        /// <param name="textContent">The CSV text content.</param>
+        /// <param name="hasHeader">Indicates if the CSV text has a header row.</param>
+        /// <param name="rowSplitter">The string used to split rows in the CSV text.</param>
+        /// <param name="columnSplitter">The character used to split columns in the CSV text.</param>
+        /// <returns>A list of objects of type T where each object represents a row in the CSV text.</returns>
         public static List<T> CsvTextToList<T>(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
         {
             var list = new List<T>();
@@ -58,15 +79,13 @@ namespace FG.CsvParser
             }
             foreach (var row in rows)
             {
-                T? instance = ParseCsvLine<T>(hasHeader, columnSplitter, headers, row);
+                T instance = ParseCsvLine<T>(hasHeader, columnSplitter, headers, row);
                 list.Add(instance);
             }
             return list;
-
-            
         }
 
-        public static T? ParseCsvLine<T>(bool hasHeader, char columnSplitter, List<string> headers, string? row)
+        public static T ParseCsvLine<T>(bool hasHeader, char columnSplitter, List<string> headers, string? row)
         {
             if (string.IsNullOrEmpty(row))
             {
@@ -97,7 +116,7 @@ namespace FG.CsvParser
             return instance;
         }
 
-        static void SetPropertyOfType<U>(U? instance, string value, PropertyInfo? property)
+        private static void SetPropertyOfType<U>(U instance, string value, PropertyInfo? property)
         {
             if (property == null)
             {
@@ -120,12 +139,30 @@ namespace FG.CsvParser
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
         }
+        
+
+        /// <summary>
+        /// Convert CSV text to JSON format.
+        /// </summary>
+        /// <param name="textContent">The CSV text content.</param>
+        /// <param name="hasHeader">Indicates if the CSV text has a header row.</param>
+        /// <param name="rowSplitter">The string used to split rows in the CSV text.</param>
+        /// <param name="columnSplitter">The character used to split columns in the CSV text.</param>
+        /// <returns>A JSON string representing the CSV data.</returns>
         public static string CsvTextToJson(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
         {
-            var list = CsvTextToList(textContent, hasHeader, rowSplitter, columnSplitter);
+            var list = CsvTextToDictionary(textContent, hasHeader, rowSplitter, columnSplitter);
             return JsonSerializer.Serialize(list, list.GetType());
         }
 
+        /// <summary>
+        /// Converts a list of objects to a CSV formatted string.
+        /// </summary>
+        /// <typeparam name="T">The type of objects in the list.</typeparam>
+        /// <param name="dataList">The list of objects to convert to CSV format.</param>
+        /// <param name="hasHeader">Indicates whether to include a header row in the CSV output.</param>
+        /// <returns>A CSV formatted string representing the list of objects.</returns>
+        /// <exception cref="ArgumentException">Thrown when the data list is null or empty.</exception>
         public static string ConvertToCsv<T>(IList<T> dataList, bool hasHeader = true)
         {
             if (dataList == null || dataList.Count == 0)
@@ -141,7 +178,7 @@ namespace FG.CsvParser
                 return ConvertDictionaryListToCsv(dataList.Cast<Dictionary<string, string>>().ToList(), hasHeader);
             }
 
-            StringBuilder csvBuilder = new();
+            StringBuilder csvBuilder = new StringBuilder();
 
             // Get properties of the object type T
             PropertyInfo[] properties = typeof(T).GetProperties();
@@ -184,7 +221,7 @@ namespace FG.CsvParser
                 throw new ArgumentException("Data list is null or empty.");
             }
 
-            StringBuilder csvBuilder = new();
+            StringBuilder csvBuilder = new StringBuilder();
 
             if (hasHeader)
             {
