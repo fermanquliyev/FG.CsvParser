@@ -4,12 +4,13 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.ComponentModel;
 
 namespace FG.CsvParser
 {
     public static class CsvHelper
     {
-        
+
         /// <summary>
         /// Convert CSV text to a list of dictionaries. Each dictionary represents a row in the CSV text.
         /// </summary>
@@ -67,6 +68,7 @@ namespace FG.CsvParser
             var list = new List<T>();
             var rows = textContent.Split(rowSplitter).ToList();
             var headers = new List<string>();
+            var properties = typeof(T).GetProperties();
             if (hasHeader)
             {
                 var headerRow = rows.First();
@@ -79,28 +81,28 @@ namespace FG.CsvParser
             }
             foreach (var row in rows)
             {
-                T instance = ParseCsvLine<T>(hasHeader, columnSplitter, headers, row);
+                T instance = ParseCsvLine<T>(hasHeader, columnSplitter, headers, row, properties);
                 list.Add(instance);
             }
             return list;
         }
 
-        public static T ParseCsvLine<T>(bool hasHeader, char columnSplitter, List<string> headers, string? row)
+        public static T ParseCsvLine<T>(bool hasHeader, char columnSplitter, List<string> headers, string? row, PropertyInfo[] properties)
         {
-            if (string.IsNullOrEmpty(row))
+            if (string.IsNullOrEmpty(row) || properties is null || properties.Length == 0)
             {
                 return default;
             }
             var columns = row.Split(columnSplitter);
             var instance = Activator.CreateInstance<T>();
-            var properties = typeof(T).GetProperties();
             for (var i = 0; i < columns.Length; i++)
             {
                 var value = columns[i];
                 if (hasHeader)
                 {
                     var header = headers[i];
-                    var property = properties.FirstOrDefault(p => p.Name.Equals(header, StringComparison.OrdinalIgnoreCase));
+                    var property = properties.FirstOrDefault(p => (p.GetCustomAttribute<CsvColumnAttribute>()?.Name.Equals(header, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    p.Name.Equals(header, StringComparison.OrdinalIgnoreCase));
                     SetPropertyOfType(instance, value, property);
                 }
                 else
@@ -139,7 +141,7 @@ namespace FG.CsvParser
                 Console.WriteLine($"Exception occurred: {ex.Message}");
             }
         }
-        
+
 
         /// <summary>
         /// Convert CSV text to JSON format.
@@ -170,10 +172,11 @@ namespace FG.CsvParser
                 throw new ArgumentException("Data list is null or empty.");
             }
 
-            if(typeof(T)==typeof(Dictionary<string, object>))
+            if (typeof(T) == typeof(Dictionary<string, object>))
             {
                 return ConvertDictionaryListToCsv(dataList.Cast<Dictionary<string, object>>().ToList(), hasHeader);
-            } else if (typeof(T) == typeof(Dictionary<string, string>))
+            }
+            else if (typeof(T) == typeof(Dictionary<string, string>))
             {
                 return ConvertDictionaryListToCsv(dataList.Cast<Dictionary<string, string>>().ToList(), hasHeader);
             }
@@ -181,14 +184,15 @@ namespace FG.CsvParser
             StringBuilder csvBuilder = new StringBuilder();
 
             // Get properties of the object type T
-            PropertyInfo[] properties = typeof(T).GetProperties();
+            PropertyInfo[] properties = typeof(T).GetProperties().OrderBy(x=> x.GetCustomAttribute<CsvColumnAttribute>()?.Order ?? 0).ToArray();
 
             if (hasHeader)
             {
                 // Write CSV header using property names
                 foreach (PropertyInfo prop in properties)
                 {
-                    csvBuilder.Append($"{prop.Name},");
+                    var customAttributeName = prop.GetCustomAttribute<CsvColumnAttribute>()?.Name;
+                    csvBuilder.Append($"{customAttributeName ?? prop.Name},");
                 }
                 csvBuilder.Length--; // Remove the last comma
                 csvBuilder.AppendLine(); // Move to next line after writing header

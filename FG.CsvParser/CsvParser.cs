@@ -230,6 +230,7 @@ namespace FG.CsvParser
             using var reader = new StreamReader(_fileStream, _encoding);
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
             var headers = new List<string>();
+            var properties = typeof(T).GetProperties();
             if (HasHeader)
             {
                 var headerRow = await reader.ReadLineAsync();
@@ -240,7 +241,7 @@ namespace FG.CsvParser
             while ((line = await reader.ReadLineAsync())
                 != null)
             {
-                var item = CsvHelper.ParseCsvLine<T>(this.HasHeader, this._delimiter, headers, line);
+                var item = CsvHelper.ParseCsvLine<T>(this.HasHeader, this._delimiter, headers, line, properties);
                 if (item != null && filter(item))
                 {
                     yield return item;

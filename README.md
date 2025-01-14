@@ -59,6 +59,14 @@ foreach (var data in dataList)
 {
     Console.WriteLine(data);
 }
+
+public class MyDataClass
+{
+    public string Name { get; set; }
+
+    [CsvColumn("Home address")]
+    public string HomeAddress { get; set; }
+}
 ```
 ### Writing CSV Content
 

@@ -138,6 +138,7 @@ namespace FG.CsvParser.Tests
             Assert.That(data[0].Name, Is.EqualTo("Test"));
         }
 
+#if DEBUG
         [Test]
         public async Task Should_Query_CsvData()
         {
@@ -146,7 +147,7 @@ namespace FG.CsvParser.Tests
             Assert.That(data.Count, Is.EqualTo(1));
             Assert.That(data[0].Id, Is.EqualTo(3));
         }
-
+#endif
         [Test]
         public void Should_Convert_CsvTextToJson()
         {
