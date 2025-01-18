@@ -3,13 +3,13 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<Nullable>enable</Nullable>
-		<Version>1.0.5</Version>
+		<Version>1.0.6</Version>
 		<AssemblyVersion>1.0.0</AssemblyVersion>
 		<FileVersion>1.0.0</FileVersion>
 		<Company>FG</Company>
 		<Authors>Farman Guliyev</Authors>
 		<Product>CsvParser</Product>
-        <Description>A library for parsing CSV files efficiently and easily.</Description>
+    <Description>A library for parsing CSV files efficiently and easily.</Description>
 		<Copyright>Copyright ©2025</Copyright>
 		<Title>FG.CsvParser</Title>
 		<RepositoryUrl>https://github.com/fermanquliyev/FG.CsvParser</RepositoryUrl>

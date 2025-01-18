@@ -87,7 +87,7 @@ namespace FG.CsvParser
             return list;
         }
 
-        public static T ParseCsvLine<T>(bool hasHeader, char columnSplitter, List<string> headers, string? row, PropertyInfo[] properties)
+        internal static T ParseCsvLine<T>(bool hasHeader, char columnSplitter, List<string> headers, string? row, PropertyInfo[] properties)
         {
             if (string.IsNullOrEmpty(row) || properties is null || properties.Length == 0)
             {

@@ -12,6 +12,12 @@ FG.CsvParser is a .NET Standard 2.1 library for parsing and writing CSV files. I
 ## Installation
 
 To install FG.CsvParser, add the following package to your project:
+
+Add the library to your project via NuGet:
+   ```bash
+   dotnet add package FG.CsvParser
+   ```
+
 ## Usage
 
 ### Creating a CsvParser Instance

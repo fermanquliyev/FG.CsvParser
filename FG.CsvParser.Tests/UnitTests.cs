@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace FG.CsvParser.Tests
 {
-    public partial class Tests
+    public partial class UnitTests
     {
         private string _filePath = string.Empty;
         private string _readFilePath;

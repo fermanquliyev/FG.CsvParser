@@ -1,6 +1,6 @@
 ﻿namespace FG.CsvParser.Tests
 {
-    public partial class Tests
+    public partial class UnitTests
     {
         partial class TestModel
         {
