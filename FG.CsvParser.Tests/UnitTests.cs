@@ -122,7 +122,9 @@ namespace FG.CsvParser.Tests
         public void Should_Convert_CsvTextToDictionary()
         {
             var csv = CsvHelper.ConvertToCsv(new List<TestModel> { new TestModel { Id = 1, Name = "Test" } });
+            Console.WriteLine(csv);
             var data = CsvHelper.CsvTextToDictionary(csv,hasHeader:true);
+            Console.WriteLine(data);
             Assert.That(data.Count, Is.EqualTo(1));
             Assert.That(data[0]["Id"], Is.EqualTo("1"));
             Assert.That(data[0]["Name"], Is.EqualTo("Test"));
