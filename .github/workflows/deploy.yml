@@ -1,0 +1,42 @@
+name: Deploy NuGet Package
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Setup .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 3.1.x # .NET Core 3.1 supports .NET Standard 2.1
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Run unit tests
+      - name: Run Unit Tests
+        run: dotnet test --configuration Release --no-build
+
+      # Build the project
+      - name: Build Project
+        run: dotnet build --configuration Release
+
+      # Pack the NuGet package
+      - name: Pack NuGet Package
+        run: dotnet pack FG.CsvParser/FG.CsvParser.csproj --configuration Release --output ./nupkg
+
+      # Publish the NuGet package
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push ./nupkg/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
