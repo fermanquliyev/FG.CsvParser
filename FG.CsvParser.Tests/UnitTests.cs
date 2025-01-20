@@ -39,7 +39,7 @@ namespace FG.CsvParser.Tests
         public async Task Should_Write_List_To_File()
         {
             Console.WriteLine(new { _filePath });
-            var testContent = new List<TestModel> { new TestModel { Id = 1, Name = "Test 1" }, new TestModel { Id = 2, Name = "Test 2" } };
+            var testContent = new List<TestModel> { new() { Id = 1, Name = "Test 1" }, new() { Id = 2, Name = "Test 2" } };
 
 
             using (var parser = CsvParser.OpenFile(_filePath))
@@ -72,7 +72,7 @@ namespace FG.CsvParser.Tests
         public async Task Should_Write_List_To_File_With_Header()
         {
             Console.WriteLine(new { _filePath });
-            var testContent = new List<TestModel> { new TestModel { Id = 1, Name = "Test 1" }, new TestModel { Id = 2, Name = "Test 2" } };
+            var testContent = new List<TestModel> { new() { Id = 1, Name = "Test 1" }, new() { Id = 2, Name = "Test 2" } };
 
 
             using (var parser = CsvParser.OpenFile(_filePath, true))
@@ -91,14 +91,14 @@ namespace FG.CsvParser.Tests
             var testContent = "testContent";
             var header = "header";
 
-            using (var parser = CsvParser.OpenFile(_filePath, new CsvParserConfiguration { HasHeader = true, RowSplitter = "\r\n" }))
+            using (var parser = CsvParser.OpenFile(_filePath, new CsvParserConfiguration { HasHeader = true, RowSplitter = Environment.NewLine }))
             {
                 await parser.WriteAsync(header);
                 await parser.WriteAsync(testContent);
             }
 
             var afterRead = await File.ReadAllTextAsync(_filePath);
-            Assert.That(afterRead, Is.EqualTo($"{header}\r\n{testContent}"));
+            Assert.That(afterRead, Is.EqualTo($"{header}{Environment.NewLine}{testContent}"));
         }
 
         [Test]
