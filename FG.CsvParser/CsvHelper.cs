@@ -19,8 +19,12 @@ namespace FG.CsvParser
         /// <param name="rowSplitter">The string used to split rows in the CSV text.</param>
         /// <param name="columnSplitter">The character used to split columns in the CSV text.</param>
         /// <returns>A list of dictionaries where each dictionary represents a row in the CSV text.</returns>
-        public static List<Dictionary<string, object>> CsvTextToDictionary(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
+        public static List<Dictionary<string, object>> CsvTextToDictionary(string textContent, bool hasHeader = false, string rowSplitter = "", char columnSplitter = ',')
         {
+            if (string.IsNullOrEmpty(rowSplitter))
+            {
+                rowSplitter = Environment.NewLine;
+            }
             var list = new List<Dictionary<string, object>>();
             var rows = textContent.Split(rowSplitter).ToList();
             var headers = new List<string>();
@@ -63,9 +67,13 @@ namespace FG.CsvParser
         /// <param name="rowSplitter">The string used to split rows in the CSV text.</param>
         /// <param name="columnSplitter">The character used to split columns in the CSV text.</param>
         /// <returns>A list of objects of type T where each object represents a row in the CSV text.</returns>
-        public static List<T> CsvTextToList<T>(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
+        public static List<T> CsvTextToList<T>(string textContent, bool hasHeader = false, string rowSplitter = "", char columnSplitter = ',')
         {
             var list = new List<T>();
+            if (string.IsNullOrEmpty(rowSplitter))
+            {
+                rowSplitter = Environment.NewLine;
+            }
             var rows = textContent.Split(rowSplitter).ToList();
             var headers = new List<string>();
             var properties = typeof(T).GetProperties();
@@ -148,11 +156,15 @@ namespace FG.CsvParser
         /// </summary>
         /// <param name="textContent">The CSV text content.</param>
         /// <param name="hasHeader">Indicates if the CSV text has a header row.</param>
-        /// <param name="rowSplitter">The string used to split rows in the CSV text.</param>
+        /// <param name="rowSplitter">The string used to split rows in the CSV text. Default value <see cref="Environment.NewLine"/> will be set if it is left null or empty. </param>
         /// <param name="columnSplitter">The character used to split columns in the CSV text.</param>
         /// <returns>A JSON string representing the CSV data.</returns>
-        public static string CsvTextToJson(string textContent, bool hasHeader = false, string rowSplitter = "\r\n", char columnSplitter = ',')
+        public static string CsvTextToJson(string textContent, bool hasHeader = false, string rowSplitter = "", char columnSplitter = ',')
         {
+            if (string.IsNullOrEmpty(rowSplitter))
+            {
+                rowSplitter = Environment.NewLine;
+            }
             var list = CsvTextToDictionary(textContent, hasHeader, rowSplitter, columnSplitter);
             return JsonSerializer.Serialize(list, list.GetType());
         }
