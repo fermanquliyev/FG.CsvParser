@@ -14,15 +14,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Setup .NET
+      # Exit if the commit was made by GitHub Actions
+      - name: Check if triggered by bot
+        run: |
+          if [[ "${{ github.actor }}" == "github-actions[bot]" ]]; then
+            echo "Triggered by GitHub Actions. Skipping workflow."
+            exit 0
+          fi
+
+      # Setup .NET (use a version compatible with .NET Standard 2.1)
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 3.1.x # .NET Core 3.1 supports .NET Standard 2.1
 
+      # Increment version in the .csproj file
+      - name: Increment Version
+        run: |
+          # Extract current version
+          VERSION=$(grep -oP '(?<=<Version>)[0-9]+\.[0-9]+\.[0-9]+' FG.CsvParser/FG.CsvParser.csproj)
+          echo "Current version: $VERSION"
+
+          # Increment patch version
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "New version: $NEW_VERSION"
+
+          # Update the version in the .csproj file
+          sed -i "s/<Version>$VERSION<\/Version>/<Version>$NEW_VERSION<\/Version>/" FG.CsvParser/FG.CsvParser.csproj
+
+      # Commit the new version to the repository
+      - name: Commit Updated Version
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "actions@github.com"
+          git add FG.CsvParser/FG.CsvParser.csproj
+          git commit -m "Bump Nuget package version to $NEW_VERSION"
+          git push
+
       # Restore dependencies
       - name: Restore dependencies
         run: dotnet restore
+        env:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: true
 
       # Run unit tests
       - name: Run Unit Tests
