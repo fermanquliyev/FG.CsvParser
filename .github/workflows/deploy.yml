@@ -67,9 +67,12 @@ jobs:
         env:
           DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: true
 
+      - name: List Test Directory
+        run: ls -la FG.CsvParser.Tests/bin/Release/net8.0
+
       # Run unit tests
       - name: Run Unit Tests
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test --configuration Release --no-build FG.CsvParser.Tests/FG.CsvParser.Tests.csproj
 
       # Build the project
       - name: Build Project
