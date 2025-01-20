@@ -25,7 +25,7 @@ jobs:
       - name: Install libssl
         run: |
           sudo apt-get update
-          sudo apt-get install libssl1.1-dev    
+          sudo apt-get install libssl1.0-dev    
           
       # Setup .NET (use a version compatible with .NET Standard 2.1)
       - name: Setup .NET
