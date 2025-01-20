@@ -65,7 +65,7 @@ namespace FG.CsvParser.Tests
             }
 
             var afterRead = await File.ReadAllTextAsync(_filePath);
-            Assert.That(afterRead, Is.EqualTo($"{header}\r\n{testContent}"));
+            Assert.That(afterRead, Is.EqualTo($"{header}{Environment.NewLine}{testContent}"));
         }
 
         [Test]
@@ -108,14 +108,14 @@ namespace FG.CsvParser.Tests
             var testContent = "testContent";
             var header = "header";
 
-            using (var parser = CsvParser.OpenFile(_filePath, new CsvParserConfiguration { HasHeader = true, RowSplitter = "\r\n", Delimitter = ';' }))
+            using (var parser = CsvParser.OpenFile(_filePath, new CsvParserConfiguration { HasHeader = true, RowSplitter = Environment.NewLine, Delimitter = ';' }))
             {
                 await parser.WriteAsync(header);
                 await parser.WriteAsync(testContent);
             }
 
             var afterRead = await File.ReadAllTextAsync(_filePath);
-            Assert.That(afterRead, Is.EqualTo($"{header}\r\n{testContent}"));
+            Assert.That(afterRead, Is.EqualTo($"{header}{Environment.NewLine}{testContent}"));
         }
 
         [Test]

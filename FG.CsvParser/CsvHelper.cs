@@ -207,7 +207,7 @@ namespace FG.CsvParser
                     csvBuilder.Append($"{customAttributeName ?? prop.Name},");
                 }
                 csvBuilder.Length--; // Remove the last comma
-                csvBuilder.AppendLine(); // Move to next line after writing header
+                csvBuilder.Append(Environment.NewLine); // Move to next line after writing header
             }
 
             // Write CSV data rows
@@ -221,7 +221,7 @@ namespace FG.CsvParser
                     csvBuilder.Append($"{EscapeCsvValue(valueString ?? string.Empty)},");
                 }
                 csvBuilder.Length--; // Remove the last comma
-                csvBuilder.AppendLine(); // Move to next line after writing a row
+                csvBuilder.Append(Environment.NewLine); // Move to next line after writing a row
             }
 
             // Remove the last appended new line
@@ -248,7 +248,7 @@ namespace FG.CsvParser
                     csvBuilder.Append($"{header},");
                 }
                 csvBuilder.Length--; // Remove the last comma
-                csvBuilder.AppendLine(); // Move to next line after writing header
+                csvBuilder.Append(Environment.NewLine); // Move to next line after writing header
             }
 
             // Write CSV data rows
@@ -261,7 +261,7 @@ namespace FG.CsvParser
                     csvBuilder.Append($"{EscapeCsvValue(valueString ?? "")},");
                 }
                 csvBuilder.Length--; // Remove the last comma
-                csvBuilder.AppendLine(); // Move to next line after writing a row
+                csvBuilder.Append(Environment.NewLine); // Move to next line after writing a row
             }
 
             // Remove the last appended new line
