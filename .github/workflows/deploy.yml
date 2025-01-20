@@ -35,6 +35,8 @@ jobs:
 
       # Increment version in the .csproj file
       - name: Increment Version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Extract current version
           VERSION=$(grep -oP '(?<=<Version>)[0-9]+\.[0-9]+\.[0-9]+' FG.CsvParser/FG.CsvParser.csproj)
@@ -49,17 +51,14 @@ jobs:
           # Update the version in the .csproj file
           sed -i "s/<Version>$VERSION<\/Version>/<Version>$NEW_VERSION<\/Version>/" FG.CsvParser/FG.CsvParser.csproj
 
-      # Commit the new version to the repository
-      - name: Commit Updated Version
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+          echo "Commit the new version to the repository"
+
           git config --local user.name "github-actions[bot]"
           git config --local user.email "actions@github.com"
           git add FG.CsvParser/FG.CsvParser.csproj
           git commit -m "Bump Nuget package version to $NEW_VERSION"
           git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:master
+          
 
       # Restore dependencies
       - name: Restore dependencies
