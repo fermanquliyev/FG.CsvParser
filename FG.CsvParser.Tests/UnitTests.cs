@@ -123,8 +123,8 @@ namespace FG.CsvParser.Tests
         {
             var csv = CsvHelper.ConvertToCsv(new List<TestModel> { new TestModel { Id = 1, Name = "Test" } });
             Console.WriteLine(csv);
-            var data = CsvHelper.CsvTextToDictionary(csv,hasHeader:true);
-            Console.WriteLine(data);
+            var data = CsvHelper.CsvTextToDictionary(csv,hasHeader:true, rowSplitter: Environment.NewLine);
+            Console.WriteLine(new { data, data.Count, First = data[0] });
             Assert.That(data.Count, Is.EqualTo(1));
             Assert.That(data[0]["Id"], Is.EqualTo("1"));
             Assert.That(data[0]["Name"], Is.EqualTo("Test"));
@@ -134,7 +134,7 @@ namespace FG.CsvParser.Tests
         public void Should_Convert_CsvTextToList()
         {
             var csv = CsvHelper.ConvertToCsv(new List<TestModel> { new TestModel { Id = 1, Name = "Test" } });
-            var data = CsvHelper.CsvTextToList<TestModel>(csv, hasHeader: true);
+            var data = CsvHelper.CsvTextToList<TestModel>(csv, hasHeader: true, rowSplitter: Environment.NewLine);
             Assert.That(data.Count, Is.EqualTo(1));
             Assert.That(data[0].Id, Is.EqualTo(1));
             Assert.That(data[0].Name, Is.EqualTo("Test"));
@@ -154,7 +154,7 @@ namespace FG.CsvParser.Tests
         public void Should_Convert_CsvTextToJson()
         {
             var csv = CsvHelper.ConvertToCsv(new List<TestModel> { new() { Id = 1, Name = "Test" } });
-            var data = CsvHelper.CsvTextToJson(csv, hasHeader: true);
+            var data = CsvHelper.CsvTextToJson(csv, hasHeader: true, rowSplitter: Environment.NewLine);
             Assert.That(data, Is.EqualTo("[{\"Id\":\"1\",\"Name\":\"Test\"}]"));
         }
 
