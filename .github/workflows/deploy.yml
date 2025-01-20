@@ -53,7 +53,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git add FG.CsvParser/FG.CsvParser.csproj
           git commit -m "Bump Nuget package version to $NEW_VERSION"
-          git push https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }} HEAD:master
+          git push https://${PAT_TOKEN}@github.com/${{ github.repository }} HEAD:master
 
       # Restore dependencies
       - name: Restore dependencies
