@@ -163,7 +163,7 @@ namespace FG.CsvParser.Tests
         {
             var data = new List<TestModel> { new() { Id = 1, Name = "Test" } };
             var csv = CsvHelper.ConvertToCsv(data);
-            Assert.That(csv, Is.EqualTo("Id,Name\r\n1,Test"));
+            Assert.That(csv, Is.EqualTo($"Id,Name{Environment.NewLine}1,Test"));
         }
 
         [Test]
@@ -171,7 +171,7 @@ namespace FG.CsvParser.Tests
         {
             var data = new List<Dictionary<string, string>> { new() { { "Id", "1" }, { "Name", "Test" } } };
             var csv = CsvHelper.ConvertToCsv(data);
-            Assert.That(csv, Is.EqualTo("Id,Name\r\n1,Test"));
+            Assert.That(csv, Is.EqualTo($"Id,Name{Environment.NewLine}1,Test"));
         }
 
         [TearDown]
