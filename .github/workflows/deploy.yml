@@ -48,12 +48,13 @@ jobs:
       - name: Commit Updated Version
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "actions@github.com"
           git add FG.CsvParser/FG.CsvParser.csproj
           git commit -m "Bump Nuget package version to $NEW_VERSION"
-          git push https://${PAT_TOKEN}@github.com/${{ github.repository }} HEAD:master
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:master
 
       # Restore dependencies
       - name: Restore dependencies
